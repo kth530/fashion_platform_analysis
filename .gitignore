@@ -1,0 +1,28 @@
+.env
+.DS_Store
+.ipynb_checkpoints/
+**/.ipynb_checkpoints/
+__pycache__/
+*.pyc
+.claude/
+CLAUDE.md
+
+# 개인정보 — 추첨용 이메일 포함 원본 설문 데이터는 공개하지 않음
+raw_data/
+
+# 행 단위 응답 데이터(익명이나 마이크로데이터)는 비공개. 재현 파이프라인(sql/py)만 공개
+tableau/*.csv
+tableau/BUILD_GUIDE.md
+
+# 대시보드 원본 통짜 PNG는 중복(README는 분할 2장+PDF 사용) → 로컬만 보관
+설문조사_대시보드.png
+
+# Claude Code 작업 산출물 (공개 불필요)
+.agents/
+skills-lock.json
+
+# AI 윤문/작업 산출물
+_workspace/
+
+# 외부 도구 설치/클론 repo
+im-not-ai/
