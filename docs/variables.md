@@ -18,26 +18,26 @@
 
 | Q | 컬럼 | 타입 | 응답수 | 단일/다중 | 비고 |
 |---|------|------|--------|----------|------|
-| - | `user_id` | int PK | 266 | - | timestamp 정렬 후 1-266 부여 |
-| - | `timestamp` | datetime | 266 | - | 응답 시각 |
-| Q1 | `gender` | object | 266 | 단일 | 남성/여성 |
-| Q2 | `age` | object | 266 | 단일 | 연령대 |
-| Q3 | `content_freq` | category(순서) | 266 | 단일 | 5단계 |
-| Q4 | `monthly_spend` | category(순서) | 266 | 단일 | 5단계 (월 지출) |
-| Q5 | `uses_platform` | object | 266 | 단일 | 예/아니오 → 모수 분기점 |
-| Q6 | `platforms` | object | 200 | **다중(쉼표)** | 1-2개 선택, 정규화 완료 |
-| Q7 | `selection_factors` | object | 200 | **다중(쉼표)** | 최대 3개 |
-| Q8 | `open_purpose` | object | 200 | **다중(쉼표)** | 최대 2개 |
-| Q9 | `purchase_count` | category(순서) | 200 | 단일 | 4단계, '구매하지 않음' 포함 |
-| Q10 | `last_purchase` | category(순서) | 191 | 단일 | 4단계 (R) |
-| Q11 | `avg_spend` | category(순서) | 191 | 단일 | 5단계 (M) |
-| Q12 | `repurchase_reason` | object | 191 | **다중(쉼표)** | 최대 2개 |
-| Q13 | `dissatisfaction` | object | 200 | **다중(쉼표)** | 비구매자도 응답 가능 |
-| Q14 | `continue_use` | category(순서) | 200 | 단일 | 5단계 |
-| Q15 | `nps` | Int64 | 200 | 단일 | 0-10 점수 → 분류는 [segments.md](segments.md) |
-| Q16 | `discovery` | object | 200 | 단일 | 인지 경로, 자유입력성 응답 정규화 완료 |
-| Q17 | `influence` | object | 200 | 단일 | 구매 영향 채널 |
-| Q18 | `feedback` | object | 93 | 텍스트 | DB 비결측 93건. 07 텍스트 분석은 질문 비답변 1건을 제외한 유효 응답 92건 사용 |
+| - | `user_id` | int PK | 266 | - | 익명 응답자 ID. timestamp 정렬 후 1-266 부여 |
+| - | `timestamp` | datetime | 266 | - | 설문 응답 제출 시각 |
+| Q1 | `gender` | object | 266 | 단일 | 응답자 성별 |
+| Q2 | `age` | object | 266 | 단일 | 응답자 연령대 |
+| Q3 | `content_freq` | category(순서) | 266 | 단일 | 패션 콘텐츠 탐색 빈도 |
+| Q4 | `monthly_spend` | category(순서) | 266 | 단일 | 월평균 패션 관련 지출 구간 |
+| Q5 | `uses_platform` | object | 266 | 단일 | 온라인 패션 플랫폼 사용 여부. 예/아니오 → 모수 분기점 |
+| Q6 | `platforms` | object | 200 | **다중(쉼표)** | 사용 중인 온라인 패션 플랫폼. 1-2개 선택, 정규화 완료 |
+| Q7 | `selection_factors` | object | 200 | **다중(쉼표)** | 플랫폼 선택 시 중요하게 보는 요인. 최대 3개 |
+| Q8 | `open_purpose` | object | 200 | **다중(쉼표)** | 패션 플랫폼을 여는 주된 목적. 최대 2개 |
+| Q9 | `purchase_count` | category(순서) | 200 | 단일 | 최근 6개월 내 플랫폼 구매 횟수. 4단계, '구매하지 않음' 포함 |
+| Q10 | `last_purchase` | category(순서) | 191 | 단일 | 최근 구매 시점. R(Recency) 점수 산출에 사용 |
+| Q11 | `avg_spend` | category(순서) | 191 | 단일 | 1회 평균 구매 금액. M(Monetary) 점수 산출에 사용 |
+| Q12 | `repurchase_reason` | object | 191 | **다중(쉼표)** | 재구매 이유. 최대 2개 |
+| Q13 | `dissatisfaction` | object | 200 | **다중(쉼표)** | 플랫폼 이용 시 불만족 요인. 비구매자도 응답 가능 |
+| Q14 | `continue_use` | category(순서) | 200 | 단일 | 향후 플랫폼 계속 사용 의향 |
+| Q15 | `nps` | Int64 | 200 | 단일 | 추천 의향 점수(0-10). 분류는 [segments.md](segments.md) |
+| Q16 | `discovery` | object | 200 | 단일 | 플랫폼 인지 경로. 자유입력성 응답 정규화 완료 |
+| Q17 | `influence` | object | 200 | 단일 | 실제 구매 결정에 영향을 준 채널 |
+| Q18 | `feedback` | object | 93 | 텍스트 | 자유응답 개선 의견. DB 비결측 93건, 07 텍스트 분석은 질문 비답변 1건 제외 후 유효 92건 사용 |
 
 ---
 
@@ -46,10 +46,10 @@
 > 아래 값은 DB에 저장된 원본 문자열이다. SQL `CASE WHEN`이나 pandas 매핑에서 그대로 사용해야 매칭된다. 설명 텍스트로 언급할 때만 `~` 대신 `-`를 사용한다.
 
 ### content_freq (Q3)
-전혀 찾아보지 않는다 < 가끔 본다 < 보통이다 < 자주 본다 < 매우 자주 본다
+`전혀 찾아보지 않는다` < `가끔 본다` < `보통이다` < `자주 본다` < `매우 자주 본다`
 
 ### monthly_spend (Q4)
-5만원 미만 < 5~10만원 < 10~20만원 < 20~30만원 < 30만원 이상
+`5만원 미만` < `5~10만원` < `10~20만원` < `20~30만원` < `30만원 이상`
 
 ### purchase_count (Q9) → F 점수
 | 값 | F |
@@ -77,7 +77,7 @@
 | 30만원 이상 | 5 |
 
 ### continue_use (Q14)
-다른 앱으로 바꿀 것 같다 < 아마 사용하지 않을 것 같다 < 잘 모르겠다 < 아마 사용할 것 같다 < 계속 사용할 것 같다
+`다른 앱으로 바꿀 것 같다` < `아마 사용하지 않을 것 같다` < `잘 모르겠다` < `아마 사용할 것 같다` < `계속 사용할 것 같다`
 
 ---
 

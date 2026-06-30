@@ -91,7 +91,7 @@
 
 분석 방법: 카이제곱(+Cramér's V·조정 표준화 잔차), Mann-Whitney U(+rank-biserial), Spearman 순위상관, KoNLPy Okt 형태소 분석. 다중응답 문항은 검정 대신 응답자 기준 비율 비교로 해석.
 
-세부 변수·세그먼트 정의는 [`docs/`](docs/), 통계 방법론은 [`METHODS.md`](docs/METHODS.md) 참조.
+문항별 변수와 데이터 정의는 [`variables.md`](docs/variables.md), 세그먼트 기준은 [`segments.md`](docs/segments.md), 통계 방법론은 [`METHODS.md`](docs/METHODS.md) 참조.
 
 ---
 
@@ -128,7 +128,7 @@
 
 - 주요 분석 결과는 렌더된 노트북에서 바로 확인할 수 있다.
 - 03–07 분석에서 사용한 SQL 쿼리는 [`sql/`](sql/) 폴더에 분리했다.
-- 변수 정의, 세그먼트 기준, 통계 방법론은 [`docs/`](docs/)에서 확인할 수 있다.
+- 변수 정의는 [`variables.md`](docs/variables.md), 세그먼트 기준과 통계 방법론은 [`docs/`](docs/)에서 확인할 수 있다.
 
 ---
 
