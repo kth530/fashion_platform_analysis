@@ -30,8 +30,9 @@
 분석 결과(01–07)를 Tableau로 종합한 6섹션 대시보드. 왼쪽 → 오른쪽 순으로 이어진다.
 
 <p align="center">
-  <img src="assets/dashboard_1.png" width="49%" alt="대시보드 1/2 — KPI·섹션 1~4">
-  <img src="assets/dashboard_2.png" width="49%" alt="대시보드 2/2 — 섹션 4~6·후속 작업">
+  <img src="assets/dashboard_1.png" width="100%" alt="대시보드 상단 — KPI·섹션 1~3">
+  <br>
+  <img src="assets/dashboard_2.png" width="100%" alt="대시보드 하단 — 섹션 4~6·후속 작업">
 </p>
 
 전체 PDF 버전은 [설문조사_대시보드.pdf](설문조사_대시보드.pdf) 참고.
