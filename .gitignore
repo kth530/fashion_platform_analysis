@@ -26,3 +26,9 @@ _workspace/
 
 # 외부 도구 설치/클론 repo
 im-not-ai/
+
+# Tableau 워크북 — 원본 설문 데이터가 임베드되어 비공개(대시보드는 Tableau Public 링크로 공유)
+# 임시/잠금 파일 포함
+*.twbx
+*.twbr
+.~*
