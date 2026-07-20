@@ -25,10 +25,10 @@
   <img src="assets/dashboard_1.png" width="100%" alt="대시보드 상단 — KPI·섹션 1~3">
 </p>
 
-**하단: 채널/플랫폼, 불만 요인, 개선 우선순위**
+**하단: 채널/플랫폼, 불만 요인, 후속 검증 우선순위**
 
 <p align="center">
-  <img src="assets/dashboard_2.png" width="100%" alt="대시보드 하단 — 섹션 4~6·후속 작업">
+  <img src="assets/dashboard_2.png" width="100%" alt="대시보드 하단 — 섹션 4~6·후속 검증 우선순위">
 </p>
 
 🔗 **[Tableau Public에서 인터랙티브 대시보드 보기](https://public.tableau.com/app/profile/.16528220/viz/__17824049698050/1)** — 차트의 **연령대·성별** 항목을 클릭하면 전체 대시보드가 해당 집단으로 필터된다. (빈 곳 클릭 시 해제)
@@ -108,7 +108,7 @@
 ├── assets/         # README용 대시보드 이미지
 ├── docs/           # 변수·세그먼트 정의·통계 방법론·SQL 워크플로
 ├── notebooks/      # 01–07 분석 노트북 + 08 전체 요약
-├── sql/            # 03–07 분석 쿼리
+├── sql/            # 02–07 분석 쿼리
 ├── tableau/        # 대시보드 추출용 SQL·스크립트 (데이터 CSV는 비공개)
 └── .env.example
 ```
