@@ -37,7 +37,7 @@
   <img src="assets/dashboard_experiment_action.png" width="100%" alt="03 실험·액션 — 문제 우선순위와 검증 설계">
 </p>
 
-🔗 **[Tableau Public에서 인터랙티브 대시보드 보기](https://public.tableau.com/app/profile/.16528220/viz/__17824049698050/1)** — 차트의 **연령대·성별** 항목을 클릭하면 전체 대시보드가 해당 집단으로 필터된다. (빈 곳 클릭 시 해제)
+🔗 **[Tableau Public에서 인터랙티브 대시보드 보기](https://public.tableau.com/app/profile/.16528220/viz/__17824049698050/1)** — 상단 내비게이션으로 세 화면을 이동할 수 있다. 01의 **NPS 세그먼트·연령대·성별·플랫폼**, 02의 **R×F·RFM·멀티호밍·채널 전환** 항목을 클릭하면 관련 차트가 교차 필터링된다. (빈 곳 클릭 시 해제)
 
 ---
 
