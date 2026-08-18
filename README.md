@@ -16,19 +16,25 @@
 
 ## 대시보드
 
-01–07 분석 결과를 Tableau 대시보드로 요약했다.  
-흐름은 `응답자 구성 → 만족/추천 → 구매 행동 → 채널/플랫폼 → 불만 요인 → 개선 우선순위` 순서다.
+01–07 분석 결과를 세 개의 Tableau 대시보드로 요약했다.  
+흐름은 `설문 표본과 사용자 태도 → 구매 행동과 채널 → 우선순위와 검증 설계` 순서다.
 
-**상단: 응답자 구성, 만족/추천, 구매 행동**
+**01 한눈에 보기 — 설문 표본과 사용자 태도**
 
 <p align="center">
-  <img src="assets/dashboard_1.png" width="100%" alt="대시보드 상단 — KPI·섹션 1~3">
+  <img src="assets/dashboard_overview.png" width="100%" alt="01 한눈에 보기 — 설문 표본과 사용자 태도">
 </p>
 
-**하단: 채널/플랫폼, 불만 요인, 후속 검증 우선순위**
+**02 행동·채널 — 구매 활동과 채널 전환**
 
 <p align="center">
-  <img src="assets/dashboard_2.png" width="100%" alt="대시보드 하단 — 섹션 4~6·후속 검증 우선순위">
+  <img src="assets/dashboard_behavior_channel.png" width="100%" alt="02 행동·채널 — 구매 활동과 채널 전환">
+</p>
+
+**03 실험·액션 — 문제 우선순위와 검증 설계**
+
+<p align="center">
+  <img src="assets/dashboard_experiment_action.png" width="100%" alt="03 실험·액션 — 문제 우선순위와 검증 설계">
 </p>
 
 🔗 **[Tableau Public에서 인터랙티브 대시보드 보기](https://public.tableau.com/app/profile/.16528220/viz/__17824049698050/1)** — 차트의 **연령대·성별** 항목을 클릭하면 전체 대시보드가 해당 집단으로 필터된다. (빈 곳 클릭 시 해제)
