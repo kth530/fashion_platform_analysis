@@ -10,6 +10,11 @@ CLAUDE.md
 # 개인정보 — 추첨용 이메일 포함 원본 설문 데이터는 공개하지 않음
 raw_data/
 
+# 로컬 게시·증빙 이미지 — 공식 대시보드 이미지는 assets/dashboard_*.png로 별도 추적
+notion_img/
+assets/KakaoTalk_Photo_2026-07-21-00-41-39 001.png
+assets/KakaoTalk_Photo_2026-07-21-00-41-40 002.jpeg
+
 # 행 단위 응답 데이터(익명이나 마이크로데이터)는 비공개. 재현 파이프라인(sql/py)만 공개
 tableau/*.csv
 tableau/BUILD_GUIDE.md
