@@ -80,6 +80,8 @@
 
 ## 분석 구조
 
+`01_cleaning.ipynb`부터 `07_text_analysis.ipynb`까지가 현재 재현 가능한 분석 워크플로다.
+
 <details>
 <summary>노트북별 분석 흐름 보기</summary>
 
@@ -92,9 +94,13 @@
 | 05 | `05_segmentation.ipynb` | 룰 기반 RFM 세그먼트 + Potential 세분화 + Can't Lose |
 | 06 | `06_channel.ipynb` | 인지 경로·구매 영향 채널 + 멀티호밍 |
 | 07 | `07_text_analysis.ipynb` | Q18 자유응답 키워드·카테고리 분류 + Non-User 사유 |
-| 08 | `08_portfolio_summary.ipynb` | 프로젝트 배경·핵심 인사이트·액션 제안 (전체 요약) |
 
 </details>
+
+### 이전 요약 자료
+
+- [Archive 안내](archive/README.md)
+- [08 포트폴리오 요약본](archive/notebooks/08_portfolio_summary.ipynb) — 과거 포트폴리오 요약 형식 보존본
 
 **워크플로**: SQL로 추출·집계·분류를 수행하고(노트북당 단일 `sql/NN_*.sql`에 `-- name:` 마커로 정리), Python 노트북은 시각화·통계 검정·텍스트 분석을 담당한다. 노트북은 `load_queries()`로 쿼리를 이름 호출한다.
 
@@ -112,9 +118,12 @@
 ```
 .
 ├── README.md
+├── archive/
+│   ├── README.md
+│   └── notebooks/08_portfolio_summary.ipynb
 ├── assets/         # README용 대시보드 이미지
 ├── docs/           # 변수·세그먼트 정의·통계 방법론·SQL 워크플로
-├── notebooks/      # 01–07 분석 노트북 + 08 전체 요약
+├── notebooks/      # 01–07 재현 가능한 분석 노트북
 ├── sql/            # 02–07 분석 쿼리
 ├── tableau/        # 대시보드 추출용 SQL·스크립트 (데이터 CSV는 비공개)
 └── .env.example
