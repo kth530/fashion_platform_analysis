@@ -40,6 +40,8 @@
 
 🔗 **[Tableau Public에서 인터랙티브 대시보드 보기](https://public.tableau.com/app/profile/.16528220/viz/_17869819971800/1_1)** — 상단 내비게이션으로 세 화면을 이동할 수 있다. 01의 **NPS 세그먼트·연령대·성별**, 02의 **R×F·RFM·멀티호밍·채널 전환** 항목을 클릭하면 관련 차트가 교차 필터링된다. (빈 곳 클릭 시 해제)
 
+🔗 **[최신 Notion 포트폴리오 보기](https://app.notion.com/p/3daec47c1085818b92eac33061c3b032?pvs=204)** — 문제 정의, 분석 과정, 핵심 결과와 후속 검증 방향을 정리했다.
+
 ---
 
 ## 데이터 개요
@@ -124,7 +126,7 @@
 ├── assets/         # README용 대시보드 이미지
 ├── docs/           # 변수·세그먼트 정의·통계 방법론·SQL 워크플로
 ├── notebooks/      # 01–07 재현 가능한 분석 노트북
-├── sql/            # 02–07 분석 쿼리
+├── sql/            # 01 canonical semantic view + 02–07 분석 쿼리
 ├── tableau/        # 대시보드 추출용 SQL·스크립트 (데이터 CSV는 비공개)
 └── .env.example
 ```

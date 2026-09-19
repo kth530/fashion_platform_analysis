@@ -59,7 +59,7 @@ DDL(뷰·테이블 생성)은 세미콜론 단위로 분리해 `execute()`로 �
 | `06_channel` | 11 | 카이제곱, 만-휘트니 U |
 | `07_text_analysis` | 3 | 형태소(Okt)·키워드·카테고리·워드클라우드 전부 |
 
-> `00`(요약)·`01`(ETL 적재)은 이 실행 패턴 대상이 아니다.
+> `01`(ETL 적재)은 이 실행 패턴 대상이 아니다. 과거 포트폴리오 요약본 `08`은 [archive](../archive/notebooks/08_portfolio_summary.ipynb)에 보존한다.
 
 ### 사용한 SQL 기법 (누적)
 
