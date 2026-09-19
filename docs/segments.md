@@ -3,6 +3,8 @@
 > 03 NPS 세그먼트 + 04 R×F 4분면 + 05 RFM 세그먼트 정의.
 > R·F·M 점수 매핑은 [variables.md](variables.md).
 
+모든 공통 분류는 `survey` → `survey_semantic` 순서로 생성한다. `survey_semantic`은 정제 응답자 전체 266행을 유지하며, 03~06 분석 view와 Tableau view가 동일한 NPS·R×F·RFM 컬럼을 소비한다. 07의 `user_group`도 Non-User와 canonical `nps_segment`를 조합한다.
+
 ---
 
 ## NPS 분류 (03, Q15 기준)
@@ -13,7 +15,7 @@
 | Passive | 7-8 | `#F59E0B` |
 | Detractor | 0-6 | `#EF4444` |
 
-분모: 사용자 200명 (Q5='예' AND nps IS NOT NULL)
+분모: `is_platform_user = 1`인 사용자 200명. `nps_valid_flag`로 0~10 정의역을 검증하며 이상값을 다른 세그먼트로 조용히 흡수하지 않는다.
 
 ### 03 실측 결과
 
@@ -29,7 +31,7 @@ NPS Score = 12.0% - 44.0% = **-32.0**
 
 ## 04 R×F 4분면 (R×F 룰, M 미포함)
 
-구매자 191명, 2축 분류(빈도 × Recency), 한글 표기. rf_quadrant는 04 데이터 로드/파생 컬럼 생성 단계에서 SQL CASE WHEN으로 생성.
+`is_rfm_eligible = 1`인 구매자 191명, 2축 분류(빈도 × Recency), 한글 표기. `rf_quadrant`는 `survey_semantic`에서 생성하고 04가 그대로 사용한다.
 
 | 분면 | 조건 | 색상 | 04 실측 (n=191) | 평균 추천점수(0-10) |
 |------|------|------|------|------|
@@ -44,7 +46,7 @@ NPS Score = 12.0% - 44.0% = **-32.0**
 
 ## 05 RFM 5세그먼트 (R×F×M 룰, M 포함)
 
-구매자 191명, 3축 분류, **영문 RFM 표준**, `rfm_seg` 테이블로 영구 저장 (PK+FK).
+`is_rfm_eligible = 1`인 구매자 191명, 3축 분류, **영문 RFM 표준**. `rfm_segment`는 `survey_semantic`에서 생성하고 05가 `rfm_seg` 테이블로 저장한다(PK+FK).
 
 | 세그먼트 | 조건 |
 |---------|------|

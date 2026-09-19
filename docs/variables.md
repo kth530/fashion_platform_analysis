@@ -6,11 +6,14 @@
 
 ## 모수 정의 (전 노트북 공통)
 
+정제 테이블 `survey`와 canonical view `survey_semantic`은 모두 266행을 유지한다. 분석 모수는 `survey_semantic`의 플래그로 선택하며, 의미가 다른 점수·범주는 별도 컬럼으로 보존한다.
+
 | 그룹 | n | 조건 |
 |------|---|------|
 | 전체 응답자 | 266 | cleaning 후 (논리 모순 3건 제외) |
-| 플랫폼 사용자 | 200 | `uses_platform = '예'` (= nps IS NOT NULL) |
-| 구매자 | 191 | 사용자 중 `purchase_count != '구매하지 않음'` |
+| 플랫폼 사용자 | 200 | `is_platform_user = 1` (`uses_platform = '예'`) |
+| 구매자 | 191 | `is_buyer = 1` |
+| RFM eligible | 191 | `is_rfm_eligible = 1` |
 
 ---
 
@@ -92,7 +95,22 @@
 ## DB 스키마
 
 - `survey` (PK: user_id, 266행, 위 20컬럼) — 01_cleaning에서 적재 완료
+- `survey_semantic` (VIEW, 266행) — `survey` 원본 컬럼 + 모수 플래그, validation flag, 점수, 세그먼트, 채널 파생값의 canonical layer
 - `rfm_seg` (PK + FK→survey, 구매자 191명 대상) — 05에서 생성 완료
+
+실행 순서: `survey` → `survey_semantic` → 분석별 view/쿼리 또는 Tableau view. `survey_semantic`은 분석 모수별로 행을 미리 제거하지 않는다.
+
+### survey_semantic 주요 파생 컬럼
+
+| 역할 | 컬럼 |
+|---|---|
+| 모수 플래그 | `is_platform_user`, `is_buyer`, `is_rfm_eligible` |
+| validation | `nps_valid_flag`, `age_valid_flag`, `rfm_input_valid_flag`, `discovery_valid_flag`, `influence_valid_flag` |
+| 태도 | `nps_segment`, `continue_score` |
+| 구매 점수 | `purchase_activity_score`(비구매자 0 포함), `frequency_score`, `recency_score`, `monetary_score` |
+| 연령 | 원본 `age` 5범주, 분석용 `age_group_3` |
+| 행동 분류 | `frequency_bin`, `recency_bin`, `rf_quadrant`, `rfm_segment` |
+| 채널 | 상세 라벨, 문항 비교용 대분류, 멀티호밍 컬럼 |
 
 ---
 

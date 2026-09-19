@@ -5,7 +5,7 @@
      CASE WHEN 세그먼트 분류 · VIEW · GROUP BY · 다축 교차집계
 
    대상: 플랫폼 사용자 200명 (NPS 분석 base), 구매자 191명 (Q12 등)
-   사용법: nps_scored_view로 세그먼트·점수 뷰를 만든 뒤 집계 쿼리가 참조한다.
+   사용법: 01_semantic_view.sql 실행 후 nps_scored_view로 세그먼트·점수 뷰를 만든 뒤 집계 쿼리가 참조한다.
            다중응답(Q4 platforms · Q12 repurchase_reason · Q13 dissatisfaction)·
            카이제곱·조정 표준화잔차·스피어만은 노트북 pandas/scipy에서 처리한다
            (explode·검정은 SQL 부적합). base_scored를 행 단위로 가져가 사용.
@@ -16,9 +16,6 @@
 CREATE OR REPLACE VIEW nps_scored AS
 SELECT
     *,
-    CASE WHEN nps >= 9 THEN 'Promoter'
-         WHEN nps >= 7 THEN 'Passive'
-         ELSE 'Detractor' END AS nps_segment,
     -- Q(콘텐츠 탐색 빈도) 점수
     CASE content_freq
         WHEN '전혀 찾아보지 않는다' THEN 1
@@ -35,8 +32,8 @@ SELECT
         WHEN '20~30만원'   THEN 4
         WHEN '30만원 이상' THEN 5
         ELSE NULL END AS spend_score
-FROM survey
-WHERE uses_platform = '예'
+FROM survey_semantic
+WHERE is_platform_user = 1
   AND nps IS NOT NULL;
 
 

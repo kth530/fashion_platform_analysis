@@ -5,7 +5,7 @@
      CASE WHEN 다단 분류 · VIEW · GROUP BY · 조건부 집계(SUM) · 윈도우 함수(OVER())
 
    대상: 플랫폼 사용자 200명 / 구매자 191명 (fashion_platform.survey)
-   사용법: rf_scored_view로 점수·분류 뷰를 만든 뒤 나머지 집계 쿼리가 참조한다.
+   사용법: 01_semantic_view.sql 실행 후 rf_scored_view로 점수·분류 뷰를 만든 뒤 나머지 집계 쿼리가 참조한다.
            (스피어만·카이제곱·다중응답(Q7)은 SQL이 아니라 노트북 pandas/scipy에서
             처리한다 — 검정·explode는 SQL 부적합. base_scored를 행 단위로 가져가 사용.)
    ===================================================================== */
@@ -15,45 +15,10 @@
 CREATE OR REPLACE VIEW rf_scored AS
 SELECT
     *,
-    CASE WHEN nps >= 9 THEN 'Promoter'
-         WHEN nps >= 7 THEN 'Passive'
-         ELSE 'Detractor' END AS nps_segment,
-    -- 구매 빈도 점수 (F)
-    CASE WHEN purchase_count = '1~2번'   THEN 1
-         WHEN purchase_count = '3~5번'   THEN 2
-         WHEN purchase_count = '6번 이상' THEN 3
-         ELSE NULL END AS freq_score,
-    -- 최근성 점수 (R)
-    CASE WHEN last_purchase = '6개월 이상' THEN 1
-         WHEN last_purchase = '3~6개월'   THEN 2
-         WHEN last_purchase = '1~3개월'   THEN 3
-         WHEN last_purchase = '1개월 이내' THEN 4
-         ELSE NULL END AS recency_score,
-    -- 빈도 2분 / 최근성 2분
-    CASE WHEN purchase_count IN ('3~5번', '6번 이상') THEN '자주(≥3)'
-         WHEN purchase_count = '1~2번'               THEN '가끔(1-2)'
-         ELSE NULL END AS freq_bin,
-    CASE WHEN last_purchase IN ('1~3개월', '1개월 이내') THEN '3개월 이내'
-         WHEN last_purchase IN ('3~6개월', '6개월 이상') THEN '3개월 초과'
-         ELSE NULL END AS recency_bin,
-    -- R×F 4분면
-    CASE
-        WHEN purchase_count IN ('3~5번', '6번 이상') AND last_purchase IN ('1~3개월', '1개월 이내') THEN '충성'
-        WHEN purchase_count = '1~2번'               AND last_purchase IN ('1~3개월', '1개월 이내') THEN '활성'
-        WHEN purchase_count IN ('3~5번', '6번 이상') AND last_purchase IN ('3~6개월', '6개월 이상') THEN '재활성화 후보'
-        WHEN purchase_count = '1~2번'               AND last_purchase IN ('3~6개월', '6개월 이상') THEN '휴면'
-        ELSE NULL
-    END AS rf_quadrant,
-    -- Q14 계속 사용 의향 점수
-    CASE continue_use
-        WHEN '다른 앱으로 바꿀 것 같다'   THEN 1
-        WHEN '아마 사용하지 않을 것 같다' THEN 2
-        WHEN '잘 모르겠다'               THEN 3
-        WHEN '아마 사용할 것 같다'       THEN 4
-        WHEN '계속 사용할 것 같다'       THEN 5
-        ELSE NULL END AS continue_score
-FROM survey
-WHERE uses_platform = '예'
+    frequency_score AS freq_score,
+    frequency_bin AS freq_bin
+FROM survey_semantic
+WHERE is_platform_user = 1
   AND nps IS NOT NULL;
 
 
@@ -67,7 +32,7 @@ SELECT purchase_count AS frequency,
        COUNT(*) AS n,
        ROUND(AVG(nps), 2) AS avg_nps
 FROM rf_scored
-WHERE purchase_count <> '구매하지 않음'
+WHERE is_buyer = 1
   AND last_purchase IS NOT NULL
 GROUP BY purchase_count, last_purchase;
 
@@ -91,9 +56,7 @@ GROUP BY gender, recency_bin;
 
 -- name: recency_by_age | Recency × 연령 3구간 분할표 카운트 (카이제곱 입력)
 SELECT
-    CASE WHEN age IN ('10대', '20대 초중반') THEN '10-20대 초중반'
-         WHEN age = '20대 후반'             THEN '20대 후반'
-         ELSE '30대 이상' END AS age_3g,
+    age_group_3 AS age_3g,
     recency_bin,
     COUNT(*) AS n
 FROM rf_scored
@@ -104,9 +67,7 @@ GROUP BY age_3g, recency_bin;
 -- name: gap_by_demo | 성별 × 연령 3구간 구매 공백률 (조건부 집계)
 SELECT
     gender,
-    CASE WHEN age IN ('10대', '20대 초중반') THEN '10-20대 초중반'
-         WHEN age = '20대 후반'             THEN '20대 후반'
-         ELSE '30대 이상' END AS age_3g,
+    age_group_3 AS age_3g,
     SUM(recency_bin = '3개월 이내') AS within_3m,
     SUM(recency_bin = '3개월 초과') AS over_3m,
     COUNT(*) AS n,

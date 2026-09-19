@@ -1,7 +1,7 @@
 """
 Tableau Public용 CSV 추출 스크립트.
 
-tableau/tableau_views.sql의 VIEW(v_tableau_main, v_tableau_channel)를 MySQL에 생성한 뒤
+sql/01_semantic_view.sql과 tableau/tableau_views.sql의 VIEW를 MySQL에 생성한 뒤
 SELECT 결과를 tableau/ 아래 CSV로 저장한다. Tableau Public은 MySQL 라이브 연결이 안 되므로
 이 CSV를 데이터 원본으로 연결한다.
 
@@ -18,6 +18,7 @@ from dotenv import load_dotenv
 ROOT = Path(__file__).resolve().parents[1]
 HERE = Path(__file__).resolve().parent
 SQL_FILE = HERE / 'tableau_views.sql'
+SEMANTIC_SQL_FILE = ROOT / 'sql' / '01_semantic_view.sql'
 
 load_dotenv(ROOT / '.env')
 
@@ -34,9 +35,12 @@ def load_queries(path):
 
 
 Q = load_queries(SQL_FILE)
+SEMANTIC_Q = load_queries(SEMANTIC_SQL_FILE)
 
-# 1) VIEW 생성 (DDL)
+# 1) canonical semantic view → Tableau VIEW 순서로 생성 (DDL)
 with engine.begin() as conn:
+    for stmt in (s for s in SEMANTIC_Q['semantic_view'].split(';') if s.strip()):
+        conn.execute(text(stmt))
     for name in ('create_main_view', 'create_channel_view'):
         for stmt in (s for s in Q[name].split(';') if s.strip()):
             conn.execute(text(stmt))
@@ -55,15 +59,9 @@ for fname, qname in exports.items():
 # 3) 다중응답 long (Q6·Q7·Q12·Q13 explode) — Tableau 다중응답 차트용
 #    구분자 ', ' split은 02_eda split_multi_response와 동일 (검증 완료).
 mr = pd.read_sql(
-    "SELECT user_id, gender, age, nps, purchase_count, "
+    "SELECT user_id, gender, age_group_3 AS age_group, nps_segment, is_buyer, "
     "platforms, selection_factors, repurchase_reason, dissatisfaction "
-    "FROM survey WHERE uses_platform='예' AND nps IS NOT NULL", engine)
-mr['age_group'] = mr['age'].map(
-    lambda a: '10-20대 초중반' if a in ('10대', '20대 초중반')
-    else ('20대 후반' if a == '20대 후반' else '30대 이상'))
-mr['nps_segment'] = mr['nps'].map(
-    lambda n: 'Promoter' if n >= 9 else ('Passive' if n >= 7 else 'Detractor'))
-mr['is_buyer'] = (mr['purchase_count'] != '구매하지 않음').astype(int)
+    "FROM survey_semantic WHERE is_platform_user=1 AND nps IS NOT NULL", engine)
 
 MR_COLS = {
     'platforms': '플랫폼(Q6)',
