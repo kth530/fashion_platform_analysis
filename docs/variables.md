@@ -1,19 +1,20 @@
 # 설문 변수 Reference
 
-> 01_cleaning.ipynb 결과의 단일 진실 소스. 세그먼트 분류는 [segments.md](segments.md).
+> 최종 분석 02→03→04의 문항·분모 정의.
 
 ---
 
-## 모수 정의 (전 노트북 공통)
+## 모수 정의
 
-정제 테이블 `survey`와 canonical view `survey_semantic`은 모두 266행을 유지한다. 분석 모수는 `survey_semantic`의 플래그로 선택하며, 의미가 다른 점수·범주는 별도 컬럼으로 보존한다.
+`final_survey`와 `final_survey_semantic`은 정제 응답 266행을 유지한다. 분석 모수는 `final_survey_semantic`의 플래그로 선택한다.
 
 | 그룹 | n | 조건 |
 |------|---|------|
-| 전체 응답자 | 266 | cleaning 후 (논리 모순 3건 제외) |
+| 전체 응답자 | 266 | 원본 269건 중 논리 모순 3건 제외 |
 | 플랫폼 사용자 | 200 | `is_platform_user = 1` (`uses_platform = '예'`) |
 | 구매자 | 191 | `is_buyer = 1` |
-| RFM eligible | 191 | `is_rfm_eligible = 1` |
+| 유효 자유응답 | 92 | `is_valid_q18 = 1` |
+| 공통 3채널 인지자 | 155 | 플랫폼 사용자·유효 NPS·`discovery_label`이 SNS·유튜브·친구/지인 |
 
 ---
 
@@ -32,15 +33,15 @@
 | Q7 | `selection_factors` | object | 200 | **다중(쉼표)** | 플랫폼 선택 시 중요하게 보는 요인. 최대 3개 |
 | Q8 | `open_purpose` | object | 200 | **다중(쉼표)** | 패션 플랫폼을 여는 주된 목적. 최대 2개 |
 | Q9 | `purchase_count` | category(순서) | 200 | 단일 | 최근 6개월 내 플랫폼 구매 횟수. 4단계, '구매하지 않음' 포함 |
-| Q10 | `last_purchase` | category(순서) | 191 | 단일 | 최근 구매 시점. R(Recency) 점수 산출에 사용 |
-| Q11 | `avg_spend` | category(순서) | 191 | 단일 | 1회 평균 구매 금액. M(Monetary) 점수 산출에 사용 |
+| Q10 | `last_purchase` | category(순서) | 191 | 단일 | 최근 구매 시점. `recency_score` 산출에 사용 |
+| Q11 | `avg_spend` | category(순서) | 191 | 단일 | 자기보고 1회 평균 구매 금액 |
 | Q12 | `repurchase_reason` | object | 191 | **다중(쉼표)** | 재구매 이유. 최대 2개 |
 | Q13 | `dissatisfaction` | object | 200 | **다중(쉼표)** | 플랫폼 이용 시 불만족 요인. 비구매자도 응답 가능 |
 | Q14 | `continue_use` | category(순서) | 200 | 단일 | 향후 플랫폼 계속 사용 의향 |
-| Q15 | `nps` | Int64 | 200 | 단일 | 추천 의향 점수(0-10). 분류는 [segments.md](segments.md) |
-| Q16 | `discovery` | object | 200 | 단일 | 플랫폼 인지 경로. 자유입력성 응답 정규화 완료 |
-| Q17 | `influence` | object | 200 | 단일 | 실제 구매 결정에 영향을 준 채널 |
-| Q18 | `feedback` | object | 93 | 텍스트 | 자유응답 개선 의견. DB 비결측 93건, 07 텍스트 분석은 질문 비답변 1건 제외 후 유효 92건 사용 |
+| Q15 | `nps` | Int64 | 200 | 단일 | 추천 의향 점수(0-10). 분류는 [02 SQL](../sql/02_data_preparation.sql) |
+| Q16 | `discovery` | object | 200 | 단일 | 플랫폼 인지 경로. 원문을 보존하고 SQL에서 `discovery_label` 생성 |
+| Q17 | `influence` | object | 200 | 단일 | 최근 구매에 가장 영향을 줬다고 답한 채널 |
+| Q18 | `feedback` | object | 93 | 텍스트 | 자유응답 개선 의견. 비결측 93건 중 질문 비답변 1건 제외 후 유효 92건 사용 |
 
 ---
 
@@ -54,30 +55,21 @@
 ### monthly_spend (Q4)
 `5만원 미만` < `5~10만원` < `10~20만원` < `20~30만원` < `30만원 이상`
 
-### purchase_count (Q9) → F 점수
-| 값 | F |
+### purchase_count (Q9) → frequency_score
+| 값 | 점수 |
 |---|---|
 | 구매하지 않음 | - (구매자 모수 제외) |
 | 1~2번 | 1 |
 | 3~5번 | 2 |
 | 6번 이상 | 3 |
 
-### last_purchase (Q10) → R 점수
-| 값 | R |
+### last_purchase (Q10) → recency_score
+| 값 | 점수 |
 |---|---|
 | 6개월 이상 | 1 |
 | 3~6개월 | 2 |
 | 1~3개월 | 3 |
 | 1개월 이내 | 4 |
-
-### avg_spend (Q11) → M 점수
-| 값 | M |
-|---|---|
-| 3만원 미만 | 1 |
-| 3~7만원 | 2 |
-| 7~15만원 | 3 |
-| 15~30만원 | 4 |
-| 30만원 이상 | 5 |
 
 ### continue_use (Q14)
 `다른 앱으로 바꿀 것 같다` < `아마 사용하지 않을 것 같다` < `잘 모르겠다` < `아마 사용할 것 같다` < `계속 사용할 것 같다`
@@ -87,30 +79,29 @@
 ## 다중응답 변수
 
 - **분모**: 응답자 수 (% of respondents). 합이 100%를 넘는 게 정상
-- **통계 검정 부적합** — 응답자 단위 독립 가정 위반. 기술통계 비율 비교만
+- **현재 분석 범위**: 항목별 응답자 비율의 기술통계만 수행. 복수 선택 항목을 서로 독립인 관측치로 취급하지 않음
 - **분모 명시**: 셀 도입부에 "구매자 191명 중", "Q12 응답자 191명 중" 등 표기
 
 ---
 
 ## DB 스키마
 
-- `survey` (PK: user_id, 266행, 위 20컬럼) — 01_cleaning에서 적재 완료
-- `survey_semantic` (VIEW, 266행) — `survey` 원본 컬럼 + 모수 플래그, validation flag, 점수, 세그먼트, 채널 파생값의 canonical layer
-- `rfm_seg` (PK + FK→survey, 구매자 191명 대상) — 05에서 생성 완료
+- `final_survey` (PK: user_id, 266행) — 최종 02에서 정제·적재
+- `final_survey_semantic` (VIEW, 266행) — 최종 02 SQL의 모수·점수 정의
+- `final_q18_labels` — 유효 자유응답 92건의 확정 다중 라벨
+- `final_etl_audit` — 원본·제외 응답 수
 
-실행 순서: `survey` → `survey_semantic` → 분석별 view/쿼리 또는 Tableau view. `survey_semantic`은 분석 모수별로 행을 미리 제거하지 않는다.
+최종 분석 실행 순서: `notebooks/02_data_preparation.ipynb` → `03_data_overview.ipynb` → `04_eda_validation.ipynb`.
 
-### survey_semantic 주요 파생 컬럼
+### 최종 분석 뷰의 주요 파생 컬럼
 
 | 역할 | 컬럼 |
 |---|---|
-| 모수 플래그 | `is_platform_user`, `is_buyer`, `is_rfm_eligible` |
-| validation | `nps_valid_flag`, `age_valid_flag`, `rfm_input_valid_flag`, `discovery_valid_flag`, `influence_valid_flag` |
-| 태도 | `nps_segment`, `continue_score` |
-| 구매 점수 | `purchase_activity_score`(비구매자 0 포함), `frequency_score`, `recency_score`, `monetary_score` |
-| 연령 | 원본 `age` 5범주, 분석용 `age_group_3` |
-| 행동 분류 | `frequency_bin`, `recency_bin`, `rf_quadrant`, `rfm_segment` |
-| 채널 | 상세 라벨, 문항 비교용 대분류, 멀티호밍 컬럼 |
+| 모수 플래그 | `is_platform_user`, `is_buyer`, `is_valid_q18` |
+| 태도 | `nps_segment`, `continue_score`, `is_retain_positive` |
+| 자기보고 구매 점수 | `frequency_score`, `recency_score` |
+| 채널 | `discovery_label`, `influence_label` |
+| 복수 플랫폼 구분 | `platform_count` |
 
 ---
 
