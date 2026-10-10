@@ -11,7 +11,7 @@ CLAUDE.md
 raw_data/
 data/q18_audited_labels.csv
 
-# 로컬 게시 이미지 — 공식 대시보드 이미지는 assets/dashboard_*.png로 별도 추적
+# 로컬 게시 이미지 — 대시보드는 README의 Tableau Public 링크로 공유
 notion_img/
 
 # 행 단위 응답 데이터(익명이나 마이크로데이터)는 비공개. 재현 파이프라인(sql/py)만 공개
